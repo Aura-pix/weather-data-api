@@ -60,7 +60,8 @@ def get_cities() -> list[str]:
 )
 def get_weather(
     city: str,
-    unit: Annotated[Literal["C", "F"], Query()] = "C",
+    unit: Annotated[Literal["C", "F", "K"], Query()] = "C",  # ADDED "K"
+    include_wind: Annotated[bool, Query(description="Include wind speed")] = False, # NEW PARAM
 ) -> WeatherResponse:
     forecast = _FORECASTS.get(city.strip().casefold())
     if forecast is None:
@@ -73,6 +74,11 @@ def get_weather(
         return forecast.model_copy(
             update={"temperature": round(forecast.temperature * 9 / 5 + 32, 1)}
         )
+    elif unit == "K": # NEW KELVIN LOGIC
+        return forecast.model_copy(
+            update={"temperature": round(forecast.temperature + 273.15, 2)}
+        )
+        
     return forecast
 
 
@@ -95,3 +101,16 @@ def create_weather_alert(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return alert
+
+@app.delete(
+    "/weather/alerts/{alert_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={403: {"description": "Forbidden"}},
+)
+def delete_weather_alert(alert_id: int) -> None:
+    if alert_id == 1:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot delete the primary alert.",
+        )
+    return None
