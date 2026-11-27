@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "watch": {
+    "routes": [
+      "app/**/*.py",
+      "api/**/*.py",
+      "routers/**/*.py",
+      "main.py",
+      "server.py"
+    ]
+  },
+  "docs": {
+    "paths": [
+      "docs"
+    ]
+  },
+  "pr": {
+    "branchPrefix": "watchdocs/sync-",
+    "reviewers": []
+  }
+}
