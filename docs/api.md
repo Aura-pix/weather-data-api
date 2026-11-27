@@ -1,19 +1,23 @@
-# Weather API reference
+# Weather API Reference
 
-Base URL: `http://127.0.0.1:8000`
+**Base URL:** `http://127.0.0.1:8000`
 
 The API provides deterministic sample forecasts for London, New York, and
 Tokyo, and accepts weather alerts. Interactive documentation and the generated
-OpenAPI schema are available at `/docs` and `/openapi.json` when the service is
-running.
+OpenAPI schema are available at `/docs` and `/openapi.json` while the service
+is running.
 
 ## `GET /cities`
 
 Returns the list of supported cities.
 
-### Responses
+### Response
 
-**`200 OK`** — A JSON array of supported city name strings.
+`200 OK` — A JSON array of supported city names.
+
+```json
+["london", "new york", "tokyo"]
+```
 
 ### Example
 
@@ -28,29 +32,49 @@ and ignores surrounding whitespace.
 
 ### Parameters
 
-| Name | In | Required | Values | Default | Description |
-| --- | --- | --- | --- | --- | --- |
-| `city` | path | Yes | `london`, `new york`, `tokyo` | — | City to retrieve. |
-| `unit` | query | No | `C`, `F` | `C` | Temperature unit: Celsius or Fahrenheit. |
+| Name   | In    | Required | Values                             | Default | Description                 |
+| ------ | ----- | -------- | ---------------------------------- | ------- | --------------------------- |
+| `city` | path  | Yes      | `london`, `new york`, `tokyo`      | —       | City to retrieve.           |
+| `unit` | query | No       | `C`, `F`                           | `C`     | Celsius or Fahrenheit.      |
 
-Any other `unit` value returns `422 Unprocessable Entity`.
+Any `unit` value other than `C` or `F` returns `422 Unprocessable Entity`.
 
 ### Responses
 
-**`200 OK`** — A `WeatherResponse` object:
+#### `200 OK`
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `temperature` | number | Yes | Sample forecast temperature, in the requested unit. |
-| `humidity` | integer | Yes | Relative humidity percentage. |
-| `condition` | string | Yes | Short weather condition. |
-| `timestamp` | string (`date-time`) | Yes | UTC timestamp associated with the sample forecast. |
+Returns a `WeatherResponse` object.
 
-**`404 Not Found`** — No forecast is available for the requested city.
+| Field         | Type             | Required | Description                                   |
+| ------------- | ---------------- | -------- | --------------------------------------------- |
+| `temperature` | number           | Yes      | Sample temperature in the requested unit.     |
+| `humidity`    | integer          | Yes      | Relative humidity percentage.                 |
+| `condition`   | string           | Yes      | Short weather condition.                      |
+| `timestamp`   | string (date-time)| Yes      | UTC timestamp associated with the forecast.   |
 
-**`422 Unprocessable Entity`** — A query parameter failed validation, such as
-an unsupported `unit` value. The response has a `detail` array with validation
-errors.
+```json
+{
+  "temperature": 54.5,
+  "humidity": 78,
+  "condition": "Cloudy",
+  "timestamp": "2026-11-25T00:00:00Z"
+}
+```
+
+#### `404 Not Found`
+
+Returned when no forecast is available for the requested city.
+
+```json
+{
+  "detail": "No forecast available for city 'Paris'."
+}
+```
+
+#### `422 Unprocessable Entity`
+
+Returned when a query parameter fails validation. The response includes a
+`detail` array containing validation errors.
 
 ### Example
 
@@ -67,7 +91,7 @@ not persist or dispatch alerts.
 
 Send a non-empty bearer token in the `Authorization` header:
 
-```text
+```http
 Authorization: Bearer <token>
 ```
 
@@ -76,16 +100,16 @@ does not validate the token with an identity provider.
 
 ### Request body
 
-Content type: `application/json`
+**Content type:** `application/json`
 
-`WeatherAlertRequest` requires both fields:
+A `WeatherAlertRequest` requires both fields:
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `severity` | string | Yes | Alert severity. |
-| `message` | string | Yes | Alert message. |
+| Field      | Type   | Required | Description      |
+| ---------- | ------ | -------- | ---------------- |
+| `severity` | string | Yes      | Alert severity.  |
+| `message`  | string | Yes      | Alert message.   |
 
-Example:
+**Example:**
 
 ```json
 {
@@ -96,14 +120,33 @@ Example:
 
 ### Responses
 
-**`201 Created`** — Returns the submitted `WeatherAlertRequest` as JSON.
+#### `201 Created`
 
-**`401 Unauthorized`** — The bearer token is missing, malformed, or empty. The
-response includes `WWW-Authenticate: Bearer`.
+Returns the submitted `WeatherAlertRequest` as JSON.
 
-**`422 Unprocessable Entity`** — The request body is missing or fails schema
-validation, such as when a required field is omitted. The response has a
-`detail` array with validation errors.
+```json
+{
+  "severity": "high",
+  "message": "Severe wind warning"
+}
+```
+
+#### `401 Unauthorized`
+
+Returned when the bearer token is missing, malformed, or empty. The response
+includes the `WWW-Authenticate: Bearer` header.
+
+```json
+{
+  "detail": "A bearer token is required."
+}
+```
+
+#### `422 Unprocessable Entity`
+
+Returned when the request body is missing or fails schema validation, such as
+when a required field is omitted. The response includes a `detail` array
+containing validation errors.
 
 ### Example
 
