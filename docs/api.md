@@ -7,6 +7,20 @@ Tokyo, and accepts weather alerts. Interactive documentation and the generated
 OpenAPI schema are available at `/docs` and `/openapi.json` when the service is
 running.
 
+## `GET /cities`
+
+Returns the list of supported cities.
+
+### Responses
+
+**`200 OK`** — A JSON array of supported city name strings.
+
+### Example
+
+```bash
+curl "http://127.0.0.1:8000/cities"
+```
+
 ## `GET /weather/{city}`
 
 Returns the forecast for a supported city. City matching is case-insensitive
