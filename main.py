@@ -48,6 +48,11 @@ _FORECASTS = {
 _bearer_auth = HTTPBearer(auto_error=False)
 
 
+@app.get("/cities", response_model=list[str])
+def get_cities() -> list[str]:
+    return list(_FORECASTS)
+
+
 @app.get(
     "/weather/{city}",
     response_model=WeatherResponse,
