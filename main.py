@@ -111,6 +111,6 @@ def delete_weather_alert(alert_id: int) -> None:
     if alert_id == 1:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Cannot delete the primary alert.",
+            detail="Cannot delete the primary alert. Add a new alert first before deleting the primary one.",
         )
     return None
