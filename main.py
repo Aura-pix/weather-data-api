@@ -17,6 +17,7 @@ class WeatherResponse(BaseModel):
     humidity: int
     condition: str
     timestamp: datetime
+    wind_speed_kmh: float 
 
 
 class WeatherAlertRequest(BaseModel):
@@ -30,18 +31,21 @@ _FORECASTS = {
         humidity=78,
         condition="Cloudy",
         timestamp=datetime(2026, 11, 25, tzinfo=timezone.utc),
+        wind_speed_kmh=15.0,
     ),
     "new york": WeatherResponse(
         temperature=8.0,
         humidity=64,
         condition="Partly cloudy",
         timestamp=datetime(2026, 11, 25, tzinfo=timezone.utc),
+        wind_speed_kmh=10.0,
     ),
     "tokyo": WeatherResponse(
         temperature=16.2,
         humidity=58,
         condition="Clear",
         timestamp=datetime(2026, 11, 25, tzinfo=timezone.utc),
+        wind_speed_kmh=5.0,
     ),
 }
 
