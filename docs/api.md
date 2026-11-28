@@ -51,13 +51,15 @@ Returns a `WeatherResponse` object.
 | `humidity`    | integer          | Yes      | Relative humidity percentage.                 |
 | `condition`   | string           | Yes      | Short weather condition.                      |
 | `timestamp`   | string (date-time)| Yes      | UTC timestamp associated with the forecast.   |
+| `wind_speed_kmh` | number        | Yes      | Wind speed in kilometers per hour.            |
 
 ```json
 {
   "temperature": 54.5,
   "humidity": 78,
   "condition": "Cloudy",
-  "timestamp": "2026-11-25T00:00:00Z"
+  "timestamp": "2026-11-25T00:00:00Z",
+  "wind_speed_kmh": 15.0
 }
 ```
 
