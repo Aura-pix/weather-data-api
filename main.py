@@ -60,8 +60,10 @@ def get_cities() -> list[str]:
 )
 def get_weather(
     city: str,
-    unit: Annotated[Literal["C", "F", "K"], Query()] = "C",  # ADDED "K"
-    include_wind: Annotated[bool, Query(description="Include wind speed")] = False, # NEW PARAM
+    unit: Annotated[Literal["C", "F", "K"], Query()] = "C",
+    include_wind: Annotated[
+        bool, Query(description="Include wind speed")
+    ] = False,
 ) -> WeatherResponse:
     forecast = _FORECASTS.get(city.strip().casefold())
     if forecast is None:
@@ -74,11 +76,11 @@ def get_weather(
         return forecast.model_copy(
             update={"temperature": round(forecast.temperature * 9 / 5 + 32, 1)}
         )
-    elif unit == "K": # NEW KELVIN LOGIC
+    elif unit == "K":
         return forecast.model_copy(
             update={"temperature": round(forecast.temperature + 273.15, 2)}
         )
-        
+
     return forecast
 
 
@@ -113,4 +115,3 @@ def delete_weather_alert(alert_id: int) -> None:
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Cannot delete the primary alert. Add a new alert first before deleting the primary one.",
         )
-    return None
